@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate google font name previews</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.2.2/dist/jszip.js" defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js' defer></script>
+    <script src="js/convertPathData.js" defer></script>
+    <script src="js/previewGenerator.js" defer></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+
+    <h1>Generate Font previews</h1>
+
+    <p>See <a href="https://github.com/herrstrietzel/google-fontname-preview">github repo</a></p>
+
+    <fieldset>
+        <legend>API key</legend>
+        <p>You can obtain a google font dev API key as described <a
+                href="https://developers.google.com/fonts/docs/developer_api#APIKey">here</a>.</p>
+        <input type="text" class="inputs" id="inputApiKey" placeholder="Enter google fonts dev API key"
+            value="">
+        <p><strong id="spanApiValidity"></strong></p>
+    </fieldset>
+
+
+    <fieldset>
+        <legend>Generate</legend>
+
+        <label>Max font size for rasterized fonts <input class="inputs" id="inputFontSize" type="number"
+                value="48"></label>
+        <p>Highly complex font geometries can bloat the svg files. Hence we prefer a rasterized image – encoded as webp.
+        </p>
+
+        <label>Generate SVG Sprites
+            <input class="inputs" id="inputSprite" type="checkbox" checked></label>
+        <p>Creates a SVG for each letter (a-z) including all font-family previews for use with fragment identifiers like so 
+            <span class="pre">src="o.svg#open-type"</span>
+        </p>
+
+        <label>Include single svgs
+            <input class="inputs" id="inputSingleFiles" type="checkbox" checked></label>
+        <p>Single SVGs creates files for each font family – will <strong>significantly increase the exported
+                file-zize.</strong></p>
+
+
+
+        <label>Show cached preview <input type="checkbox" class="inputs" id="inputShowPreview" checked></label>
+
+        <p><button type="button" class="btn-default" id="btnGenerate">Generate Font previews</button>
+        </p>
+
+        <p id="progess">Processing <span id="processedCurrent"></span>/<span id="processedTotal"></span> fonts. <span id="processedState"></span></p>
+        <p>
+            <a href="" class="btn-default --inactive dsp-non" id="btnDownload">Download preview images</a>
+        </p>
+
+
+
+    </fieldset>
+
+
+    <h2>Preview List</h2>
+    <article id="article-preview">
+        <ul class="letter-links" id="navLetters"></ul>
+
+    </article>
+    <div id="previewList" data-style="position:absolute; width:0; height:0;"></div>
+
+
+</body>
+
+</html>
