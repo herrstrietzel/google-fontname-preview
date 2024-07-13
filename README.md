@@ -1,27 +1,53 @@
 # google-fontname-preview
-Generate static preview SVG images for google font-family names using in this font.  
+Generate static preview SVG images for *all* available google font-family names using in this font.   
 
+Obviously processing thousands of fonts (to this date ~1750) to create a preview image is a tedious task.  
+
+Admittedly, this helper has its limitations but it helps to generate "relatively" compact static preview images displaying the used fonts by generating the optimized scalable vector based images (... uhm SVGs) or webP raster images (in case the geometry is too complex). Besides, it combines images in letter-based sprites to reduce requests.
+
+**Example 2024-07-12/ 1713 fonts**
+Font previews are organized alphabetically:   
+You'll end up in 26 sprite SVGs with a total size of 4.4 MB (uncompressed ~ 1.5 MB gzipped).
+
+## Usage/features: Generate ...
+0.  preview images either based on a static/cached or an up-to-date (google fonts dev API key required) font list
+1. a zipped package using the web-app – "vanilla-JS" **client-side** powered by `jszip` library
+2. an array of preview images on local server providing `php` – **server-side**
+
+
+
+## File output
 This helper generates previews:    
-* as `SVG` sprites – combining multiple font-families in one file per letter: you'll end up with 26 sprite SVG files including all font-family previews. This approach is based on fragment identifiers  
+* as **`SVG` sprites** – combining multiple font-families in one file per letter: you'll end up with 26 sprite SVG files including all font-family previews. This approach is based on [fragment identifiers](https://css-tricks.com/svg-fragment-identifiers-work/)   
 
 
-<img src="preview_images/sprites/o.svg#open-sans" alt="open sans" height="100">
+``` 
+<img src="o.svg#open-sans">
+```
+<img src="preview_images/sprites/o.svg#open-sans" alt="open sans" height="50" >
+
+* or as **single (self contained) SVG images**  
+
+``` 
+<img src="f/fira-sans.svg">
+```
+<img src="preview_images/img/f/fira-sans.svg" alt="fira sans" height="50" >
+
+<hr>
+
+### Vector vs. raster image?
+When testing the output file sizes, I recognized some "display" font families (e.g "Rubik 80s Fade
+") introduce a high bézier complexity eventually resulting in a huge file size when delevered as a native SVG. 
+
+Thats why I decided to switch between vector and rasterized output to find a reasonable balance between  precision and file size (let's remember +1700 fonts)
 
 
-* or as single (self contained) SVG images  
 
+## Challenges: Get a font preview at least for the font names?  
 
-<img src="preview_images/img/f/fira-sans.svg" alt="fira sans" height="100">
-
-
-
-## Challenges: How to get a font preview at least for the font names
-The list of available fonts via google font API is massive >1700 fonts.  
+The list of available fonts via google font API is massive > 1750 fonts.  
 Sometimes, you may need to get a simple preview rendering of a specific font-family showing exactly the used font – without parsing the full-fledged font.  
 
-Processing thousands of fonts to generate a preview image is a quite exhausting task.
-
-## How it works 
 Fortunately, the google font dev API can help:   
 
 If you need to write your own font list application, I highly recommend to obtain a free API key as explained in this official google documentation  [»Acquiring and using an API key«](https://developers.google.com/fonts/docs/developer_api#APIKey)
