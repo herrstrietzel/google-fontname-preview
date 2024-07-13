@@ -126,7 +126,7 @@ let showPreview = inputShowPreview.checked;
 
 
                 //limit letter range fo testing
-                if (l !== 'a' && l !== 'b'  && l !== 'c' ) continue
+                //if (l !== 'a' && l !== 'b'  && l !== 'c' ) continue
 
                 for (let i = 0; i < fonts.length; i++) {
                     let item = fonts[i];
