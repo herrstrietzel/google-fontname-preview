@@ -142,7 +142,7 @@ let showPreview = inputShowPreview.checked;
                     //single svg
                     let singleSvg = `<svg id="fnt-${family}" viewBox="0 0 ${Math.ceil(bb.width + 1)} ${fontSize * 2}" xmlns="http://www.w3.org/2000/svg">` + markup + `</svg>`;
 
-                    if (exportSingleFiles) zip.file(`img/${family}.svg`, singleSvg);
+                    if (exportSingleFiles) zip.file(`img/${id}.svg`, singleSvg);
 
                     processed++;
                     processedCurrent.textContent = processed;

@@ -4,8 +4,14 @@ Generate static preview SVG images for google font-family names using in this fo
 This helper generates previews:    
 * as `SVG` sprites – combining multiple font-families in one file per letter: you'll end up with 26 sprite SVG files including all font-family previews. This approach is based on fragment identifiers  
 
-![open sans](preview_images/sprites/o.svg#open-sans)  
-![open sans](preview_images/sprites/f.svg#fira-sans)  
+
+<img src="preview_images/sprites/o.svg#open-sans" alt="open sans" height="100">
+
+
+* or as single (self contained) SVG images  
+
+
+<img src="preview_images/img/fira-sans.svg" alt="fira sans" height="100">
 
 
 ## Challenges: How to get a font preview at least for the font names
