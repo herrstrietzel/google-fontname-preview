@@ -14,6 +14,7 @@ This helper generates previews:
 <img src="preview_images/img/fira-sans.svg" alt="fira sans" height="100">
 
 
+
 ## Challenges: How to get a font preview at least for the font names
 The list of available fonts via google font API is massive >1700 fonts.  
 Sometimes, you may need to get a simple preview rendering of a specific font-family showing exactly the used font – without parsing the full-fledged font.  
