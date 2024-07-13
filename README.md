@@ -11,7 +11,7 @@ This helper generates previews:
 * or as single (self contained) SVG images  
 
 
-<img src="preview_images/img/fira-sans.svg" alt="fira sans" height="100">
+<img src="preview_images/img/f/fira-sans.svg" alt="fira sans" height="100">
 
 
 
