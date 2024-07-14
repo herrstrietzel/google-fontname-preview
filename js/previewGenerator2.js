@@ -16,14 +16,9 @@ if (flush) {
 
 
 let sampleText = inputSampleText.value;
-let phpSupport = false;
 
 
-
-
-
-// generate letter range checkboxes
-/*
+//add letter range checkboxes
 let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 let chHtml = '';
 letters.forEach(l => {
@@ -35,17 +30,9 @@ chHtml += `<button class="btn-default" id="btnDeselect" type="button">Deselect a
 ckeckboxLetters.insertAdjacentHTML('beforeend', chHtml);
 let checkboxes = document.querySelectorAll('.inputsFilterLetter');
 let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked')].map(item => { return item.value });
-*/
 
 
 (async () => {
-
-    /**
-     * check php is available
-     * for local file saving
-     */
-    let testPhp = await (await fetch('php/save_unzip.php')).text()
-    phpSupport = testPhp === 'php available';
 
     //init - get font list
     updateOptions();
@@ -69,7 +56,7 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         })
         updateOptions();
     }
-
+    
     btnSelectAll.onclick = () => {
         checkboxes.forEach(ch => {
             ch.checked = true
@@ -173,8 +160,28 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
     <meta http-Equiv="Cache-Control" Content="no-cache" />
     <meta http-Equiv="Pragma" Content="no-cache" />
     <meta http-Equiv="Expires" Content="0" />
+
     <link rel="stylesheet" href="../css/style.css">
+
     <script src="../js/preview.js" defer></script>
+    <style>
+        body {
+            font-size: 1em;
+            font-family:sans-serif;
+        }
+        figcaption {
+            font-size: 10px;
+        }
+
+        img {
+            border: 1px solid #ccc;
+        }
+            header{
+            position:sticky;
+            top:0;
+            background:#fff;
+            }
+    </style>
 </head>`;
 
         let previewHtmlBody = `<body id="main"><header id="header"></header>`;
@@ -192,6 +199,7 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
             localStorage.setItem('previeObj', JSON.stringify(previeObj))
         }
 
+
         for (l in previeObj) {
 
             let fonts = previeObj[l];
@@ -200,6 +208,8 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
 
             //limit letter range fo testing
             if (!letterSelection.includes(l)) continue;
+            //if (l !== 'a') continue
+            //if (l !== 'a' && l !== 'b'  && l !== 'c' ) continue
 
             let url = `preview_images/sprites/${l}.svg`;
             let spriteCache = await fetch(url);
@@ -240,6 +250,8 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
 
             }
 
+
+
             // add sprite svg
             let svgMarkup = `<svg id="${l}" viewBox="0 0 ${Math.ceil(maxWidth)} ${fontSize * 2}" xmlns="http://www.w3.org/2000/svg">
 <style>.f {display: none;}.f:target {display: block;}</style>\n`+ svgMarkupBody + `</svg>`;
@@ -248,6 +260,7 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
             /**
              * add to zip 
              */
+
             if (exportSprite) zip.file(`sprites/${l}.svg`, svgMarkup);
 
 
@@ -289,6 +302,9 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         zip.file(`previews.html`, previewHtml);
         zip.file(`previews.json`, JSON.stringify(previewImgList));
         let dir = sampleText ? 'preview_images_' + sampleText : 'preview_images';
+
+
+
         processedState.textContent = ' Creating zip download - please wait ...';
 
         //output zip 
@@ -296,7 +312,10 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
             type: "blob"
         });
 
-        if (phpSupport) {
+        //check php is available
+        let testPhp = await (await fetch('php/save_unzip.php')).text()
+
+        if (testPhp === 'php available') {
             //save to server
             const formData = new FormData();
             formData.append('zipFile', new File([blob], "previews.zip"));
@@ -309,6 +328,9 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
             });
 
         }
+
+
+
 
 
         btnDownload.href = await URL.createObjectURL(blob);
@@ -327,11 +349,13 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         //show preview in iframe
         if (showPreview) {
             articlePreview.classList.remove('dsp-non');
-            let rand = Math.floor((Math.random() * 1000000) + 1);
-            let urlPrev = `${dir}/previews.html` + '?id=' + rand;
+            let rand = Math.floor((Math.random()*1000000)+1);
+            let urlPrev = `${dir}/previews.html`+'?id='+rand;
             iframePrev.src = urlPrev;
             linkPreview.href = urlPrev;
         }
+
+
 
 
     }
