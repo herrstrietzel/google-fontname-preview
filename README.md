@@ -8,12 +8,16 @@ Admittedly, this helper has its limitations but it helps to generate "relatively
 **Example 2024-07-12/ 1713 fonts**
 Font previews are organized alphabetically:   
 You'll end up in 26 sprite SVGs with a total size of 4.4 MB (uncompressed ~ 1.5 MB gzipped).
+Keep in mind the JSON font list is already ~1.5 MB in file size.
 
-## Usage/features: Generate ...
-0.  preview images either based on a static/cached or an up-to-date (google fonts dev API key required) font list
-1. a zipped package using the web-app – "vanilla-JS" **client-side** powered by `jszip` library
-2. an array of preview images on local server providing `php` – **server-side**
+## Features: Generate ...
+1. preview images either based on a static/cached or an up-to-date (google fonts dev API key required) font list
+2. a zipped package using the web-app – "vanilla-JS" **client-side** powered by `jszip` library
+3. an array of preview images on local server provided `php` is available – **server-side**
 
+## Usage
+1. Open the [static github page version](https://herrstrietzel.github.io/google-fontname-preview/) in your browser. The provided font list is either retrieved from the included JSON cache file or – when entering a valid google font dev API key – via API (resulting in the most up-to-date font list)
+2. Download the repo and run it on a local server. If your server supports `php` – the static SVG images are generated and saved to the `preview_images` directory.
 
 
 ## File output
