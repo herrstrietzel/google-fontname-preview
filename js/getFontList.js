@@ -3,11 +3,8 @@
  */
 
 async function fetchFontList() {
-    //let apiKey = "AIzaSyDBXOkDLb08GXnLZq-USTIt0iSJfme4Spg";
-
     processedState.textContent = 'Loading font list ...';
     btnGenerate.disabled = true;
-
 
     let apiKey = inputApiKey.value;
     let cacheJson = `json/gfontList_vf_ttf.json`;
