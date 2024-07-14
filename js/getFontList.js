@@ -2,6 +2,7 @@
  * fetch font list
  */
 
+
 async function fetchFontList() {
     processedState.textContent = 'Loading font list ...';
     btnGenerate.disabled = true;
