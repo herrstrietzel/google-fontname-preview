@@ -9,6 +9,7 @@ let showPreview = true;
 
 // allow caching and flushing
 let flush = window.location.hash ? window.location.hash.includes('flush') : false;
+let apiKey = inputApiKey.value.trim();
 let useCache = !inputApiKey.value.trim() && !flush ? (true) : false;
 if (flush) {
     localStorage.removeItem('previeObj');
@@ -42,12 +43,12 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
 
     /**
      * check php is available
-     * for local file saving
+     * for local file saving/caching
      */
     let testPhp = await (await fetch('php/save_unzip.php')).text()
     phpSupport = testPhp === 'php available';
 
-    //init - get font list
+    //init - get font list options
     updateOptions();
 
     let inputs = document.querySelectorAll('.inputs');
@@ -78,12 +79,32 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
     }
 
 
-
     async function updateOptions() {
         fontList = await fetchFontList();
+
+        // cache font list locally if running on php
+        if(phpSupport && apiKey){
+
+            let apiUrl = `https://www.googleapis.com/webfonts/v1/webfonts?capability=VF&capability=CAPABILITY_UNSPECIFIED&sort=alpha&key=${apiKey}`;
+
+            let apiJson = await(await fetch(apiUrl)).text();
+
+            //send to php for file saving
+            let res = await fetch('php/save_json.php', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/json; charset=UTF-8"
+                },
+                body: JSON.stringify({
+                    content: apiJson,
+                    filename: '../json/gfontList_vf_ttf.json'
+                })
+            });
+        }
         fontSizeCanvas = +inputFontSize.value;
         exportSingleFiles = inputSingleFiles.checked;
         exportSprite = inputSprite.checked;
+        apiKey = inputApiKey.value.trim();
         useCache = !inputApiKey.value.trim() && !flush ? (true) : false;
         sampleText = inputSampleText.value;
         letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked')].map(item => { return item.value });
@@ -299,7 +320,7 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         if (phpSupport) {
             //save to server
             const formData = new FormData();
-            formData.append('zipFile', new File([blob], "previews.zip"));
+            formData.append('file', new File([blob], "previews.zip"));
             formData.append('dir', dir);
 
             //send to php for file saving
