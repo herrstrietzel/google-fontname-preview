@@ -13,7 +13,6 @@
     <!-- opentype js related -->
     <script src='https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js' defer></script>
     <script src="js/renderText.js" defer></script>
-
     <script src="js/convertPathData.js" defer></script>
     <script src="js/getFontList.js" defer></script>
     <script src="js/previewGenerator.js" defer></script>
@@ -40,6 +39,7 @@
                 key«</a>.</p>
         <input type="text" class="inputs" id="inputApiKey" placeholder="Enter google fonts dev API key" value="">
         <p><strong id="spanApiValidity"></strong></p>
+        <p><label><input id="inputUseAPI" type="checkbox"> Use API refresh (otherwise use cache)</label>  <button id="btnClearLocalCache" class="btn-default">Clear local Storage Cache</button></p>
     </fieldset>
 
 
@@ -95,13 +95,17 @@
                     checked="">Z</label> &nbsp;<button class="btn-default" id="btnDeselect" type="button">Deselect
                 all</button> <button class="btn-default" id="btnSelectAll" type="button">Select all</button></p>
         <label>Custom Sample text – by default the font-family name</label>
-        <input type="text" class="inputs" id="inputSampleText" value="" placeholder="font-family name">
+        <input type="text" class="inputs" id="inputSampleText" value="" placeholder="Sample text">
 
         <p><button type="button" class="btn-default" id="btnGenerate">Generate Font previews</button>
         </p>
 
-        <p id="progess">Processing <span id="processedCurrent"></span>/<span id="processedTotal"></span> fonts. <span
-                id="processedState"></span></p>
+        <p id="progress">
+            <!-- 
+                <span id="processedInit"></span> 
+                <span id="processedCurrent"></span> <span id="processedTotal"></span> fonts. <span
+                    id="processedState"></span></p>
+            -->
         <p>
             <a href="" class="btn-default --inactive dsp-non" id="btnDownload">Download preview images</a>
         </p>

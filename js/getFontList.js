@@ -2,9 +2,7 @@
  * fetch font list
  */
 
-
 async function fetchFontList() {
-    processedState.textContent = 'Loading font list ...';
     btnGenerate.disabled = true;
 
     let apiKey = inputApiKey.value;
@@ -31,9 +29,7 @@ async function fetchFontList() {
         spanApiValidity.className = 'valid';
     }
 
-    processedState.textContent = 'Font list ready!';
     btnGenerate.disabled = false;
-
 
     let fontList = await (await (res.json())).items;
     return fontList;

@@ -1,11 +1,13 @@
 <?php
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $dir = isset($_POST['dir']) ? '../'.$_POST['dir'].'/' : '../preview_images/';
 
-    if (isset($_FILES['zipFile']) && $_FILES['zipFile']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_FILES['zipFile']) && $_FILES['zipFile']['error'] === UPLOAD_ERR_OK ) {
         $uploadDir = $dir;
-
+        
+        // create directory
         if(!is_dir($uploadDir)){
             mkdir($dir);
         }
@@ -19,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $zip->close();
 
                 //delete zip file
-                unlink($uploadFile);
+               unlink($uploadFile);
             } 
         } 
     } 

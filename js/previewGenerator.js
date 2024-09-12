@@ -6,12 +6,48 @@ let previewWidth = 20;
 let exportSingleFiles = inputSingleFiles.checked;
 let exportSprite = inputSprite.checked;
 let showPreview = true;
+let useAPIRefresh = inputUseAPI.checked;
 
 // allow caching and flushing
 let flush = window.location.hash ? window.location.hash.includes('flush') : false;
+
+let progressLog = {
+    feedback: '',
+    processed: 0,
+    fontsTotal: 0,
+};
+function renderProgress() {
+    let {feedback, processed, fontsTotal } = progressLog 
+    progress.textContent = processed && processed<fontsTotal ? `${feedback} ${processed}/${fontsTotal}` : feedback;
+}
+
+
+/**
+ * cache API key
+ * to retrieve up to date data
+ * - slower!
+ */
+let apiKeyCache = window.localStorage.getItem('gfontAPIKey');
+if (apiKeyCache) {
+    inputApiKey.value = apiKeyCache;
+}
+// store API key in local Storage
+inputApiKey.addEventListener('input', (e) => {
+    let key = e.currentTarget.value;
+    window.localStorage.setItem('gfontAPIKey', key);
+})
+
 let apiKey = inputApiKey.value.trim();
 let useCache = !inputApiKey.value.trim() && !flush ? (true) : false;
 if (flush) {
+    localStorage.removeItem('previeObj');
+}
+
+/**
+ * clear local storage cache
+ */
+btnClearLocalCache.onclick = () => {
+    localStorage.removeItem('gfontAPIKey');
     localStorage.removeItem('previeObj');
 }
 
@@ -20,26 +56,8 @@ let sampleText = inputSampleText.value;
 let phpSupport = false;
 
 
-
-
-
-// generate letter range checkboxes
-/*
-let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-let chHtml = '';
-letters.forEach(l => {
-    chHtml += `<label><input class="inputs inputsFilterLetter" type="checkbox" value="${l}" checked>${l.toUpperCase()}</label> &nbsp;`
-})
-chHtml += `<button class="btn-default" id="btnDeselect" type="button">Deselect all</button> <button class="btn-default" id="btnSelectAll" type="button">Select all</button>`;
-
-
-ckeckboxLetters.insertAdjacentHTML('beforeend', chHtml);
-let checkboxes = document.querySelectorAll('.inputsFilterLetter');
-let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked')].map(item => { return item.value });
-*/
-
-
 (async () => {
+
 
     /**
      * check php is available
@@ -47,6 +65,7 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
      */
     let testPhp = await (await fetch('php/save_unzip.php')).text()
     phpSupport = testPhp === 'php available';
+
 
     //init - get font list options
     updateOptions();
@@ -59,20 +78,22 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         })
     })
 
+
     btnGenerate.addEventListener('click', async (e) => {
         btnDownload.classList.add('dsp-non');
         await generateSprites();
     })
 
+    let checkboxesletter = document.querySelectorAll('.inputsFilterLetter');
     btnDeselect.onclick = () => {
-        checkboxes.forEach(ch => {
+        checkboxesletter.forEach(ch => {
             ch.checked = false
         })
         updateOptions();
     }
 
     btnSelectAll.onclick = () => {
-        checkboxes.forEach(ch => {
+        checkboxesletter.forEach(ch => {
             ch.checked = true
         })
         updateOptions();
@@ -80,14 +101,20 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
 
 
     async function updateOptions() {
+
+        progressLog.feedback = 'Loading font list ...';
+        renderProgress();
         fontList = await fetchFontList();
+        progressLog.feedback = 'Font list ready!';
+        renderProgress();
+
 
         // cache font list locally if running on php
-        if(phpSupport && apiKey){
+        if (phpSupport && apiKey && useAPIRefresh) {
 
             let apiUrl = `https://www.googleapis.com/webfonts/v1/webfonts?capability=VF&capability=CAPABILITY_UNSPECIFIED&sort=alpha&key=${apiKey}`;
 
-            let apiJson = await(await fetch(apiUrl)).text();
+            let apiJson = await (await fetch(apiUrl)).text();
 
             //send to php for file saving
             let res = await fetch('php/save_json.php', {
@@ -117,9 +144,11 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
      */
     async function generateSprites() {
 
+        /*
         processedCurrent.textContent = '';
         processedTotal.textContent = '';
         processedState.textContent = '';
+        */
 
         if (!exportSingleFiles && !exportSprite) {
             alert('No export specified')
@@ -180,7 +209,9 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
          * per letter
          */
 
-        processedTotal.textContent = fontList.length;
+        progressLog.fontsTotal = fontList.length;
+        //progressLog.push()
+        //processedTotal.textContent = fontList.length;
         let processed = 0;
 
         // preview
@@ -257,7 +288,12 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
                 if (exportSingleFiles) zip.file(`img/${l}/${id}.svg`, singleSvg);
 
                 processed++;
-                processedCurrent.textContent = processed;
+                progressLog.feedback = 'Processing fonts – this may take a while';
+                progressLog.processed = processed;
+                renderProgress();
+
+
+                //processedCurrent.textContent = processed;
 
             }
 
@@ -310,17 +346,23 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
         zip.file(`previews.html`, previewHtml);
         zip.file(`previews.json`, JSON.stringify(previewImgList));
         let dir = sampleText ? 'preview_images_' + sampleText : 'preview_images';
-        processedState.textContent = ' Creating zip download - please wait ...';
+        //processedState.textContent = ' Creating zip download - please wait ...';
+
+        progressLog.feedback = ' Creating zip download - please wait ...';
+        renderProgress();
+
 
         //output zip 
         let blob = await zip.generateAsync({
             type: "blob"
         });
 
+
         if (phpSupport) {
+
             //save to server
             const formData = new FormData();
-            formData.append('file', new File([blob], "previews.zip"));
+            formData.append('zipFile', new File([blob], "previews.zip"));
             formData.append('dir', dir);
 
             //send to php for file saving
@@ -342,7 +384,9 @@ let letterSelection = [...document.querySelectorAll('.inputsFilterLetter:checked
 
 
         btnDownload.textContent = `Download preview images ${filesize} MB`;
-        processedState.textContent = `Zip is ready! ${time} s`;
+        //processedState.textContent = `Zip is ready! ${time} s`;
+        progressLog.feedback = `Zip is ready! ${time} s`;
+        renderProgress();
 
 
         //show preview in iframe
